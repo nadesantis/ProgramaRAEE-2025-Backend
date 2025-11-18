@@ -3,6 +3,8 @@ package com.products.audit.web;
 import com.products.audit.domain.AuditAction;
 import com.products.audit.domain.AuditLog;
 import com.products.audit.infrastructure.AuditLogRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('ADMIN')")
 public class AuditController {
 
-  private final AuditLogRepository repo;
+	@Autowired
+  private AuditLogRepository repo;
 
   public AuditController(AuditLogRepository repo) { this.repo = repo; }
 

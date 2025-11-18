@@ -2,16 +2,20 @@ package com.products.catalog.infrastructure.repository;
 
 import com.products.catalog.domain.Product;
 import com.products.catalog.domain.ProductRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class JpaProductRepository implements ProductRepository {
 
-    private final SpringDataProductJpaRepository spring;
+	@Autowired
+    private SpringDataProductJpaRepository spring;
 
     public JpaProductRepository(SpringDataProductJpaRepository spring) {
         this.spring = spring;
@@ -51,4 +55,9 @@ public class JpaProductRepository implements ProductRepository {
     public Page<Product> findByNameAndActive(String name, boolean active, Pageable pageable) {
         return spring.findByNameContainingIgnoreCaseAndActive(name, active, pageable);
     }
+
+	@Override
+	public List<Product> findAll() {
+		return spring.findAll();
+	}
 }

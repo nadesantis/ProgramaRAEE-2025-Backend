@@ -11,6 +11,7 @@ import com.products.audit.application.AuditService;
 import com.products.audit.domain.AuditAction;
 
 import jakarta.validation.Valid;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,31 +49,48 @@ public class ClientController {
   @PostMapping
   @PreAuthorize("hasAnyRole('ADMIN','OPERADOR_VENTAS')")
   public ResponseEntity<ClientResponse> create(@Valid @RequestBody ClientRequest req) {
-    Client c = createUC.handle(
-        req.getName(), req.getEmail(), req.getPhone(), req.getTaxId(),
-        toAddresses(req.getAddresses())
-    );
-    audit.success(AuditAction.CLIENT_CREATE, "Client", c.getId(), "Creado: " + c.getName());
-    return ResponseEntity.ok(toResponse(c));
+    try {
+      Client c = createUC.handle(
+          req.getName(), req.getEmail(), req.getPhone(), req.getTaxId(),
+          toAddresses(req.getAddresses())
+      );
+      audit.success(AuditAction.CLIENT_CREATE, "Client", c.getId(),
+          "Creado: " + c.getName() + meta("addresses", c.getAddresses() != null ? c.getAddresses().size() : 0));
+      return ResponseEntity.ok(toResponse(c));
+    } catch (RuntimeException ex) {
+      audit.failure(AuditAction.CLIENT_CREATE, "Error al crear cliente: " + safe(ex.getMessage()));
+      throw ex;
+    }
   }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN','OPERADOR_VENTAS')")
   public ResponseEntity<ClientResponse> update(@PathVariable Long id, @Valid @RequestBody ClientRequest req) {
-    Client c = updateUC.handle(
-        id, req.getName(), req.getEmail(), req.getPhone(), req.getTaxId(),
-        toAddresses(req.getAddresses())
-    );
-    audit.success(AuditAction.CLIENT_UPDATE, "Client", id, "Actualizado: " + c.getName());
-    return ResponseEntity.ok(toResponse(c));
+    try {
+      Client c = updateUC.handle(
+          id, req.getName(), req.getEmail(), req.getPhone(), req.getTaxId(),
+          toAddresses(req.getAddresses())
+      );
+      audit.success(AuditAction.CLIENT_UPDATE, "Client", id,
+          "Actualizado: " + c.getName() + meta("addresses", c.getAddresses() != null ? c.getAddresses().size() : 0));
+      return ResponseEntity.ok(toResponse(c));
+    } catch (RuntimeException ex) {
+      audit.failure(AuditAction.CLIENT_UPDATE, "Client", id, "Error al actualizar: " + safe(ex.getMessage()));
+      throw ex;
+    }
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN','OPERADOR_VENTAS')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    deleteUC.handle(id);
-    audit.success(AuditAction.CLIENT_DELETE, "Client", id, "Eliminado");
-    return ResponseEntity.noContent().build();
+    try {
+      deleteUC.handle(id);
+      audit.success(AuditAction.CLIENT_DELETE, "Client", id, "Eliminado");
+      return ResponseEntity.noContent().build();
+    } catch (RuntimeException ex) {
+      audit.failure(AuditAction.CLIENT_DELETE, "Client", id, "Error al eliminar: " + safe(ex.getMessage()));
+      throw ex;
+    }
   }
 
   @GetMapping("/{id}")
@@ -83,7 +101,10 @@ public class ClientController {
           audit.success(AuditAction.CLIENT_READ, "Client", id, "Detalle");
           return ResponseEntity.ok(toResponse(c));
         })
-        .orElse(ResponseEntity.notFound().build());
+        .orElseGet(() -> {
+          audit.failure(AuditAction.CLIENT_READ, "Client", id, "No encontrado");
+          return ResponseEntity.notFound().build();
+        });
   }
 
   @GetMapping
@@ -93,9 +114,11 @@ public class ClientController {
                                    @RequestParam(defaultValue = "10") int size) {
     Pageable pageable = PageRequest.of(page, size);
     var result = listUC.handle(name, pageable).map(this::toResponse);
-    audit.success(AuditAction.CLIENT_LIST, "Listado clientes");
+    audit.success(AuditAction.CLIENT_LIST, "Listado clientes" + meta("name", name));
     return result;
   }
+
+  // ----------------- helpers -----------------
 
   private List<Address> toAddresses(List<AddressDTO> dtos) {
     if (dtos == null) return List.of();
@@ -132,5 +155,14 @@ public class ClientController {
     }).toList();
     r.setAddresses(addresses);
     return r;
+  }
+
+  /** Adjunta metadatos simples en formato clave=valor (evita JSON si no lo necesitás). */
+  private String meta(String key, Object value) {
+    return value == null ? "" : " [" + key + "=" + value + "]";
+  }
+
+  private String safe(String s) {
+    return (s == null || s.isBlank()) ? "unknown" : s;
   }
 }

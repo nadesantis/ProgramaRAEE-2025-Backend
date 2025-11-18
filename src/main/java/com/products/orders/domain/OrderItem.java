@@ -7,6 +7,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(
     name = "order_items",
@@ -20,6 +22,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonManagedReference  
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
@@ -53,9 +56,10 @@ public class OrderItem {
         it.productName = productName;
         it.unitPrice = unitPrice;
         it.quantity = quantity;
-        it.lineTotal = unitPrice.multiply(BigDecimal.valueOf(quantity.longValue()));
+        it.recalcLineTotal();
         return it;
     }
+
 
     public Long getId() { return id; }
 
@@ -72,11 +76,20 @@ public class OrderItem {
     public void setProductName(String productName) { this.productName = productName; }
 
     public BigDecimal getUnitPrice() { return unitPrice; }
-    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; recalcLineTotal();}
 
     public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; recalcLineTotal();}
 
     public BigDecimal getLineTotal() { return lineTotal; }
     public void setLineTotal(BigDecimal lineTotal) { this.lineTotal = lineTotal; }
+    
+    public void recalcLineTotal() {
+        if (unitPrice == null || quantity == null) {
+            this.lineTotal = BigDecimal.ZERO;
+        } else {
+            this.lineTotal = unitPrice.multiply(BigDecimal.valueOf(quantity.longValue()));
+        }
+    }
+
 }

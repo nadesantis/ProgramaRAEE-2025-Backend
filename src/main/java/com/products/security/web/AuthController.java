@@ -9,18 +9,17 @@ import com.products.security.web.dto.RegisterRequest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
 	@Autowired
-private AuthService auth;
+private  AuthService auth;
 
 @PostMapping("/register")
 public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest req) {
@@ -30,6 +29,11 @@ public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest
 @PostMapping("/login")
 public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
  return ResponseEntity.ok(auth.login(req));
+}
+
+@PostMapping("/google-login")
+public ResponseEntity<AuthResponse> googleLogin(@RequestBody GoogleLoginRequest req) {
+  return ResponseEntity.ok(auth.loginWithGoogle(req));
 }
 }
 

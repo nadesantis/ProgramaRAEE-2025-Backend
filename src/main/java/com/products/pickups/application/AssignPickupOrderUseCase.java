@@ -2,13 +2,16 @@ package com.products.pickups.application;
 
 import com.products.pickups.domain.PickupOrder;
 import com.products.pickups.domain.PickupOrderRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AssignPickupOrderUseCase {
 
-  private final PickupOrderRepository repo;
+	@Autowired
+  private  PickupOrderRepository repo;
 
   public AssignPickupOrderUseCase(PickupOrderRepository repo) { this.repo = repo; }
 

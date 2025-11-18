@@ -3,6 +3,8 @@ package com.products.orders.application;
 import com.products.orders.domain.Order;
 import com.products.orders.domain.OrderRepository;
 import com.products.orders.domain.OrderStatus;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,7 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ListOrdersUseCase {
 
-    private final OrderRepository repo;
+	@Autowired
+    private OrderRepository repo;
 
     public ListOrdersUseCase(OrderRepository repo) { this.repo = repo; }
 

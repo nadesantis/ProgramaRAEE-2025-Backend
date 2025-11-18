@@ -1,4 +1,4 @@
-// package com.products.pickups.domain;
+
 package com.products.pickups.domain;
 
 import jakarta.persistence.*;
@@ -41,10 +41,20 @@ public class PickupOrder {
   private Instant closedAt;
 
   @Column(name = "location", length = 240)
-  private String location; 
+  private String location;
 
   @Column(name = "notes", length = 1000)
   private String notes;
+
+  // NUEVOS: métricas de cierre
+  @Column(name = "close_duration_minutes")
+  private Integer closeDurationMinutes;
+
+  @Column(name = "devices_count")
+  private Integer devicesCount;
+
+  @Column(name = "raee_kg")
+  private Double raeeKg;
 
   @PrePersist void prePersist() {
     if (requestedAt == null) requestedAt = Instant.now();
@@ -74,7 +84,9 @@ public class PickupOrder {
     startedAt = Instant.now();
   }
 
-  public void close(Long whoId, String closeNotes) {
+  /** Cierre con campos enriquecidos */
+  public void close(Long whoId, Instant closedAtInput, Integer durationMinutes,
+                    Integer devicesCount, String closeNotes) {
     if (status != PickupStatus.IN_PROGRESS && status != PickupStatus.ASSIGNED) {
       throw new IllegalStateException("Solo ASSIGNED/IN_PROGRESS pueden cerrarse");
     }
@@ -82,10 +94,15 @@ public class PickupOrder {
       throw new IllegalStateException("Solo el técnico asignado puede cerrar");
     }
     status = PickupStatus.CLOSED;
-    closedAt = Instant.now();
-    if (closeNotes != null) this.notes = (this.notes == null ? "" : this.notes + " | ") + closeNotes;
+    this.closedAt = (closedAtInput != null ? closedAtInput : Instant.now());
+    this.closeDurationMinutes = durationMinutes;
+    this.devicesCount = devicesCount;
+    if (closeNotes != null && !closeNotes.isBlank()) {
+      this.notes = (this.notes == null || this.notes.isBlank()) ? closeNotes : this.notes + " | " + closeNotes;
+    }
   }
 
+  // getters/setters …
   public Long getId() { return id; }
   public Long getClientId() { return clientId; }
   public PickupStatus getStatus() { return status; }
@@ -97,9 +114,13 @@ public class PickupOrder {
   public Instant getClosedAt() { return closedAt; }
   public String getLocation() { return location; }
   public String getNotes() { return notes; }
+  public Integer getCloseDurationMinutes() { return closeDurationMinutes; }
+  public Integer getDevicesCount() { return devicesCount; }
+  public Double getRaeeKg() { return raeeKg; }
 
   public void setId(Long id) { this.id = id; }
   public void setClientId(Long clientId) { this.clientId = clientId; }
   public void setLocation(String location) { this.location = location; }
   public void setNotes(String notes) { this.notes = notes; }
+  public void setRaeeKg(Double raeeKg) { this.raeeKg = raeeKg; }
 }

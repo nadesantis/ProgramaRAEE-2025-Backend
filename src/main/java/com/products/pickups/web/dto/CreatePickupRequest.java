@@ -7,8 +7,15 @@ public class CreatePickupRequest {
   @NotNull private Long clientId;
   @Size(max = 240) private String location;
   @Size(max = 1000) private String notes;
+  private java.math.BigDecimal raeeKg; 
 
-  public Long getClientId() { return clientId; }
+  public java.math.BigDecimal getRaeeKg() {
+	return raeeKg;
+}
+public void setRaeeKg(java.math.BigDecimal raeeKg) {
+	this.raeeKg = raeeKg;
+}
+public Long getClientId() { return clientId; }
   public void setClientId(Long clientId) { this.clientId = clientId; }
   public String getLocation() { return location; }
   public void setLocation(String location) { this.location = location; }

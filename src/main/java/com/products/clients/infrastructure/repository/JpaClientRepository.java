@@ -1,17 +1,22 @@
+// src/main/java/com/products/clients/infrastructure/repository/JpaClientRepository.java
 package com.products.clients.infrastructure.repository;
 
 import com.products.clients.domain.Client;
 import com.products.clients.domain.ClientRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class JpaClientRepository implements ClientRepository {
 
-    private final SpringDataClientJpaRepository spring;
+	@Autowired
+    private  SpringDataClientJpaRepository spring;
 
     public JpaClientRepository(SpringDataClientJpaRepository spring) {
         this.spring = spring;
@@ -48,5 +53,16 @@ public class JpaClientRepository implements ClientRepository {
     @Override
     public Page<Client> findByNameContainingIgnoreCase(String name, Pageable pageable) {
         return spring.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    @Override
+    public List<Client> findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(String name, String taxId) {
+        return spring.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(name, taxId);
+    }
+
+    // 👇 Este es el que te faltaba
+    @Override
+    public List<Client> findAll() {
+        return spring.findAll();
     }
 }

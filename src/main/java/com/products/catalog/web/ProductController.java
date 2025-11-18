@@ -9,6 +9,7 @@ import com.products.audit.application.AuditService;
 import com.products.audit.domain.AuditAction;
 
 import jakarta.validation.Valid;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,25 +45,42 @@ public class ProductController {
   @PostMapping
   @PreAuthorize("hasAnyRole('ADMIN','OPERADOR_VENTAS')")
   public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest req) {
-    Product p = createUC.handle(req.getName(), req.getDescription(), req.getUnitPrice(), req.getActive());
-    audit.success(AuditAction.PRODUCT_CREATE, "Product", p.getId(), "Creado: " + p.getName());
-    return ResponseEntity.ok(toResponse(p));
+    try {
+      Product p = createUC.handle(req.getName(), req.getDescription(), req.getUnitPrice(), req.getActive());
+      audit.success(AuditAction.PRODUCT_CREATE, "Product", p.getId(),
+          "Creado: " + p.getName() + meta("price", p.getUnitPrice()));
+      return ResponseEntity.ok(toResponse(p));
+    } catch (RuntimeException ex) {
+      audit.failure(AuditAction.PRODUCT_CREATE, "Error al crear producto: " + safe(ex.getMessage()));
+      throw ex;
+    }
   }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN','OPERADOR_VENTAS')")
   public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody ProductRequest req) {
-    Product p = updateUC.handle(id, req.getName(), req.getDescription(), req.getUnitPrice(), req.getActive());
-    audit.success(AuditAction.PRODUCT_UPDATE, "Product", id, "Actualizado: " + p.getName());
-    return ResponseEntity.ok(toResponse(p));
+    try {
+      Product p = updateUC.handle(id, req.getName(), req.getDescription(), req.getUnitPrice(), req.getActive());
+      audit.success(AuditAction.PRODUCT_UPDATE, "Product", id,
+          "Actualizado: " + p.getName() + meta("price", p.getUnitPrice()));
+      return ResponseEntity.ok(toResponse(p));
+    } catch (RuntimeException ex) {
+      audit.failure(AuditAction.PRODUCT_UPDATE, "Product", id, "Error al actualizar: " + safe(ex.getMessage()));
+      throw ex;
+    }
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN','OPERADOR_VENTAS')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    deleteUC.handle(id);
-    audit.success(AuditAction.PRODUCT_DELETE, "Product", id, "Eliminado");
-    return ResponseEntity.noContent().build();
+    try {
+      deleteUC.handle(id);
+      audit.success(AuditAction.PRODUCT_DELETE, "Product", id, "Eliminado");
+      return ResponseEntity.noContent().build();
+    } catch (RuntimeException ex) {
+      audit.failure(AuditAction.PRODUCT_DELETE, "Product", id, "Error al eliminar: " + safe(ex.getMessage()));
+      throw ex;
+    }
   }
 
   @GetMapping("/{id}")
@@ -73,7 +91,10 @@ public class ProductController {
           audit.success(AuditAction.PRODUCT_READ, "Product", id, "Detalle");
           return ResponseEntity.ok(toResponse(p));
         })
-        .orElse(ResponseEntity.notFound().build());
+        .orElseGet(() -> {
+          audit.failure(AuditAction.PRODUCT_READ, "Product", id, "No encontrado");
+          return ResponseEntity.notFound().build();
+        });
   }
 
   @GetMapping
@@ -84,9 +105,11 @@ public class ProductController {
                                     @RequestParam(defaultValue = "10") int size) {
     Pageable pageable = PageRequest.of(page, size);
     var result = listUC.handle(name, active, pageable).map(this::toResponse);
-    audit.success(AuditAction.PRODUCT_LIST, "Listado productos");
+    audit.success(AuditAction.PRODUCT_LIST, "Listado productos" + meta("name", name) + meta("active", active));
     return result;
   }
+
+  // ----------------- helpers -----------------
 
   private ProductResponse toResponse(Product p) {
     ProductResponse r = new ProductResponse();
@@ -98,5 +121,14 @@ public class ProductController {
     r.setCreatedAt(p.getCreatedAt());
     r.setUpdatedAt(p.getUpdatedAt());
     return r;
+  }
+
+  /** Adjunta metadatos simples clave=valor (sin JSON). */
+  private String meta(String key, Object value) {
+    return value == null ? "" : " [" + key + "=" + value + "]";
+  }
+
+  private String safe(String s) {
+    return (s == null || s.isBlank()) ? "unknown" : s;
   }
 }

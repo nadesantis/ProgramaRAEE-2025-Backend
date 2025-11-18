@@ -3,6 +3,8 @@ package com.products.clients.application;
 import com.products.clients.domain.Address;
 import com.products.clients.domain.Client;
 import com.products.clients.domain.ClientRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,8 +12,8 @@ import java.util.List;
 
 @Service
 public class UpdateClientUseCase {
-
-    private final ClientRepository repo;
+	@Autowired
+    private ClientRepository repo;
 
     public UpdateClientUseCase(ClientRepository repo) { this.repo = repo; }
 

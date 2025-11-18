@@ -7,6 +7,8 @@ import com.products.orders.domain.Order;
 import com.products.orders.domain.OrderItem;
 import com.products.orders.domain.OrderRepository;
 import com.products.orders.domain.factory.OrderFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +16,12 @@ import java.util.List;
 
 @Service
 public class CreateOrderUseCase {
-
-    private final OrderRepository orderRepo;
-    private final ClientRepository clientRepo;     
-    private final ProductRepository productRepo;   
+	@Autowired
+    private  OrderRepository orderRepo;
+	@Autowired
+    private  ClientRepository clientRepo;   
+	@Autowired
+    private  ProductRepository productRepo;   
 
     public CreateOrderUseCase(OrderRepository orderRepo,
                               ClientRepository clientRepo,
@@ -32,20 +36,38 @@ public class CreateOrderUseCase {
     @Transactional
     public Order handle(Long clientId, List<ItemInput> items) {
 
-        clientRepo.findById(clientId).orElseThrow(() -> new IllegalArgumentException("Client not found"));
-
+        clientRepo.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Client not found"));
 
         List<OrderItem> builtItems = items.stream().map(i -> {
             Product p = productRepo.findById(i.productId())
                     .orElseThrow(() -> new IllegalArgumentException("Product not found: " + i.productId()));
+
+            System.out.println("DEBUG PRODUCT: id=" + p.getId() + ", name=" + p.getName());
+
             if (i.quantity() == null || i.quantity() <= 0) {
                 throw new IllegalArgumentException("Invalid quantity for product " + i.productId());
             }
-            return OrderItem.of(p.getId(), p.getName(), p.getUnitPrice(), i.quantity());
+
+            OrderItem it = OrderItem.of(p.getId(), p.getName(), p.getUnitPrice(), i.quantity());
+
+            System.out.println("DEBUG ITEM: productId=" + it.getProductId()
+                    + ", productName=" + it.getProductName()
+                    + ", unitPrice=" + it.getUnitPrice()
+                    + ", quantity=" + it.getQuantity());
+
+            return it;
         }).toList();
 
         Order order = OrderFactory.create(clientId, builtItems);
 
+        // justo antes de guardar, revisamos de nuevo
+        for (OrderItem it : order.getItems()) {
+            System.out.println("DEBUG BEFORE SAVE: productName=" + it.getProductName());
+        }
+
         return orderRepo.save(order);
     }
+
+
 }

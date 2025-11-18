@@ -6,15 +6,18 @@ import java.time.Instant;
 import java.util.List;
 
 public class OrderResponse {
+
     private Long id;
     private Long clientId;
-    private String clientName; 
+    private String clientName;
+    private String clientTaxId; 
     private OrderStatus status;
     private BigDecimal totalAmount;
     private Instant createdAt;
     private Instant approvedAt;
     private List<OrderItemDTO> items;
 
+    // === Getters & Setters ===
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -22,8 +25,11 @@ public class OrderResponse {
     public Long getClientId() { return clientId; }
     public void setClientId(Long clientId) { this.clientId = clientId; }
 
-    public String getClientName() { return clientName; }       
-    public void setClientName(String clientName) { this.clientName = clientName; } 
+    public String getClientName() { return clientName; }
+    public void setClientName(String clientName) { this.clientName = clientName; }
+
+    public String getClientTaxId() { return clientTaxId; }         // ✅ NUEVO getter
+    public void setClientTaxId(String clientTaxId) { this.clientTaxId = clientTaxId; } // ✅ NUEVO setter
 
     public OrderStatus getStatus() { return status; }
     public void setStatus(OrderStatus status) { this.status = status; }

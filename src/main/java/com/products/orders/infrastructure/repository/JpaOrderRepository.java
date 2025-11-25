@@ -3,8 +3,6 @@ package com.products.orders.infrastructure.repository;
 import com.products.orders.domain.Order;
 import com.products.orders.domain.OrderRepository;
 import com.products.orders.domain.OrderStatus;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -16,8 +14,7 @@ import java.util.Optional;
 @Repository
 public class JpaOrderRepository implements OrderRepository {
 
-	@Autowired
-    private  SpringDataOrderJpaRepository spring;
+    private final SpringDataOrderJpaRepository spring;
 
     public JpaOrderRepository(SpringDataOrderJpaRepository spring) {
         this.spring = spring;

@@ -2,8 +2,6 @@ package com.products.pickups.application;
 
 import com.products.pickups.domain.PickupOrder;
 import com.products.pickups.domain.PickupOrderRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +10,7 @@ import java.time.Instant;
 @Service
 public class ClosePickupOrderUseCase {
 
-	@Autowired
-  private PickupOrderRepository repo;
+  private final PickupOrderRepository repo;
 
   public ClosePickupOrderUseCase(PickupOrderRepository repo) { this.repo = repo; }
 

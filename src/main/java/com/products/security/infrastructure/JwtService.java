@@ -10,14 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+
 @Service
 public class JwtService {
 
-	
-private SecretKey key;
-	
-private long expiration;
+private final SecretKey key;
+private final long expiration;
 
 public JwtService(
    @Value("${jwt.secret}") String secret,

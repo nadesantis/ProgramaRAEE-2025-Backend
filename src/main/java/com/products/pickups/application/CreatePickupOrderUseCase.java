@@ -6,16 +6,14 @@ import com.products.pickups.domain.PickupOrderRepository;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CreatePickupOrderUseCase {
-	@Autowired
-  private  PickupOrderRepository repo;
-	@Autowired
-  private  ClientRepository clientRepo;
+
+  private final PickupOrderRepository repo;
+  private final ClientRepository clientRepo;
 
   public CreatePickupOrderUseCase(PickupOrderRepository repo, ClientRepository clientRepo) {
     this.repo = repo;

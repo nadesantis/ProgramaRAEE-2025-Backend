@@ -2,8 +2,6 @@ package com.products.catalog.infrastructure.repository;
 
 import com.products.catalog.domain.Product;
 import com.products.catalog.domain.ProductRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -14,8 +12,7 @@ import java.util.Optional;
 @Repository
 public class JpaProductRepository implements ProductRepository {
 
-	@Autowired
-    private SpringDataProductJpaRepository spring;
+    private final SpringDataProductJpaRepository spring;
 
     public JpaProductRepository(SpringDataProductJpaRepository spring) {
         this.spring = spring;

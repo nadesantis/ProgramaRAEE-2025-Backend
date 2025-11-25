@@ -4,17 +4,13 @@ import com.products.audit.domain.AuditAction;
 import com.products.audit.domain.AuditLog;
 import com.products.audit.support.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.products.audit.infrastructure.AuditLogRepository;
 
 @Service
 public class AuditService {
-	@Autowired
-  private  AuditLogRepository repo;
-	@Autowired
-  private HttpServletRequest request; 
+  private final AuditLogRepository repo;
+  private final HttpServletRequest request; 
 
   public AuditService(AuditLogRepository repo, HttpServletRequest request) {
     this.repo = repo;

@@ -4,7 +4,6 @@ package com.products.clients.infrastructure.repository;
 import com.products.clients.domain.Client;
 import com.products.clients.domain.ClientRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -15,8 +14,7 @@ import java.util.Optional;
 @Repository
 public class JpaClientRepository implements ClientRepository {
 
-	@Autowired
-    private  SpringDataClientJpaRepository spring;
+    private final SpringDataClientJpaRepository spring;
 
     public JpaClientRepository(SpringDataClientJpaRepository spring) {
         this.spring = spring;

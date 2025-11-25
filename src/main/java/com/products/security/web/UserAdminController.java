@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+
 @RestController
 @RequestMapping("/api/admin/users")
 @PreAuthorize("hasRole('ADMIN')")
 public class UserAdminController {
-	@Autowired
-    private  UserAdminService service;
+
+    private final UserAdminService service;
 
     public UserAdminController(UserAdminService service) {
         this.service = service;

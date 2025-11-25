@@ -8,8 +8,6 @@ import com.mercadopago.resources.preference.Preference;
 import com.products.orders.domain.Order;
 import com.products.orders.domain.OrderItem;
 import com.products.payments.config.AppUrls;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,8 +18,7 @@ import java.util.Objects;
 @Service
 public class MercadoPagoPreferenceService {
 
-	@Autowired
-    private  AppUrls appUrls;
+    private final AppUrls appUrls;
 
     public MercadoPagoPreferenceService(AppUrls appUrls) {
         this.appUrls = appUrls;

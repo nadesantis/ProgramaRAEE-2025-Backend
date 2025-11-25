@@ -36,14 +36,15 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class PdfBackupService {
+
 	@Autowired
-  private  ProductRepository productRepo;
+  private ProductRepository productRepo;
 	@Autowired
-  private  ClientRepository  clientRepo;
+  private ClientRepository  clientRepo;
 	@Autowired
-  private  OrderRepository   orderRepo;
+  private OrderRepository   orderRepo;
 	@Autowired
-  private  UserRepository    userRepo;
+  private UserRepository    userRepo;
 	@Autowired
   private @Nullable AuditLogRepositoryPort auditRepo;
 

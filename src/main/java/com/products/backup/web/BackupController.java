@@ -5,8 +5,6 @@ import com.products.backup.application.PdfBackupService;
 import com.products.backup.xlsx.ExcelBackupService;
 import com.products.audit.application.AuditService;
 import com.products.audit.domain.AuditAction;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,12 +19,9 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/api/backup")
 public class BackupController {
 
-	@Autowired
-  private PdfBackupService pdfBackup;
-	@Autowired
-  private AuditService audit; // ⬅️ añadimos bitácora
-  @Autowired
-  private ExcelBackupService excelBackupService;
+  private final PdfBackupService pdfBackup;
+  private final AuditService audit; // ⬅️ añadimos bitácora
+  private final ExcelBackupService excelBackupService;
 
   public BackupController(PdfBackupService pdfBackup, AuditService audit, ExcelBackupService excelBackupService) {
     this.pdfBackup = pdfBackup;

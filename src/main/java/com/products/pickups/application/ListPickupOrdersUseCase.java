@@ -3,16 +3,13 @@ package com.products.pickups.application;
 import com.products.pickups.domain.PickupOrder;
 import com.products.pickups.domain.PickupOrderRepository;
 import com.products.pickups.domain.PickupStatus;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ListPickupOrdersUseCase {
-	@Autowired
-  private  PickupOrderRepository repo;
+  private final PickupOrderRepository repo;
   public ListPickupOrdersUseCase(PickupOrderRepository repo) { this.repo = repo; }
 
   public Page<PickupOrder> handle(Long technicianId, PickupStatus status, Pageable pageable) {

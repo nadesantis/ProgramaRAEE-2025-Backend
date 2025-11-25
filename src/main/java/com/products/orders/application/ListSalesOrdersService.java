@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ListSalesOrdersService {
 	@Autowired
-  private  OrderRepository orderRepo;
+  private OrderRepository orderRepo;
 	@Autowired
-  private  ClientRepository clientRepo;
+  private ClientRepository clientRepo;
 
   @Transactional(readOnly = true)
   public Page<OrderSummaryDTO> list(String razonOCuit, OrderStatus status, int page, int size) {

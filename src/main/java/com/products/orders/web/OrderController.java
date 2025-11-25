@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN','VENTAS','OPERADOR_VENTAS','ADMIN_VENTAS')")
 public class OrderController {
-
 	@Autowired
   private ProductRepository productRepo;
 	@Autowired

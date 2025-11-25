@@ -4,8 +4,6 @@ import com.products.orders.domain.Order;
 import com.products.pickups.domain.PickupOrder;
 import com.products.pickups.domain.PickupOrderRepository;
 import com.products.pickups.domain.PickupStatus;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -16,8 +14,7 @@ import java.util.Optional;
 @Repository
 public class JpaPickupOrderRepository implements PickupOrderRepository {
 
-	@Autowired
-  private  SpringDataPickupJpaRepository spring;
+  private final SpringDataPickupJpaRepository spring;
 
   public JpaPickupOrderRepository(SpringDataPickupJpaRepository spring) {
     this.spring = spring;

@@ -2,16 +2,13 @@ package com.products.orders.application;
 
 import com.products.orders.domain.Order;
 import com.products.orders.domain.OrderRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ApproveOrderUseCase {
 
-	@Autowired
-    private  OrderRepository orderRepo;
+    private final OrderRepository orderRepo;
 
     public ApproveOrderUseCase(OrderRepository orderRepo) { this.orderRepo = orderRepo; }
 

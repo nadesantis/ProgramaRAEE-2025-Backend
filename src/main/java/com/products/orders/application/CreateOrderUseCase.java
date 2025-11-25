@@ -7,8 +7,6 @@ import com.products.orders.domain.Order;
 import com.products.orders.domain.OrderItem;
 import com.products.orders.domain.OrderRepository;
 import com.products.orders.domain.factory.OrderFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +14,10 @@ import java.util.List;
 
 @Service
 public class CreateOrderUseCase {
-	@Autowired
-    private  OrderRepository orderRepo;
-	@Autowired
-    private  ClientRepository clientRepo;   
-	@Autowired
-    private  ProductRepository productRepo;   
+
+    private final OrderRepository orderRepo;
+    private final ClientRepository clientRepo;     
+    private final ProductRepository productRepo;   
 
     public CreateOrderUseCase(OrderRepository orderRepo,
                               ClientRepository clientRepo,

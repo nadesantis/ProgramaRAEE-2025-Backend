@@ -36,7 +36,6 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
 	@Autowired
   private AuthenticationManager authenticationManager;
 	@Autowired

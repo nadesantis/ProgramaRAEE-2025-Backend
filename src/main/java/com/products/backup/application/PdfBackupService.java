@@ -36,16 +36,15 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class PdfBackupService {
-
-	@Autowired
+@Autowired
   private ProductRepository productRepo;
-	@Autowired
+@Autowired
   private ClientRepository  clientRepo;
-	@Autowired
+@Autowired
   private OrderRepository   orderRepo;
-	@Autowired
-  private UserRepository    userRepo;
-	@Autowired
+@Autowired
+  private UserRepository userRepo;
+@Autowired
   private @Nullable AuditLogRepositoryPort auditRepo;
 
   private static final Font H1 = new Font(Font.HELVETICA, 16, Font.BOLD);
